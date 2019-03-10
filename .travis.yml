@@ -11,18 +11,17 @@ cache:
     - "$HOME/.cache/pre-commit"
 
 before_install:
-  - if [ -n "$JYTHON" ]; then ./travis_jython.sh; source $HOME/myvirtualenv/bin/activate ;fi
-  - if [ -n "$JYTHON" ]; then pip install jip; fi
-  - if [ -n "$JYTHON" ]; then export CLASSPATH=$VIRTUAL_ENV/javalib/*; fi
-  - if [ -n "$JYTHON" ]; then pip install unittest2; fi
+  - if [ -n "$JYTHON" ]; then ./travis_jython.sh; fi
+  - if [ -n "$JYTHON" ]; then export PYTHON_EXE=$HOME/jython/bin/python; else export PYTHON_EXE=python; fi
+  - if [ -n "$JYTHON" ]; then export CLASSPATH=$HOME/jython/javalib/*; fi
 
 install:
-  - pip install pip -U
-  - python get-poetry.py --preview -y
+  - $PYTHON_EXE -m pip install pip -U
+  - $PYTHON_EXE get-poetry.py --preview -y
   - source $HOME/.poetry/env
   - poetry install -v
 
-script: pytest -q tests/
+script: $PYTHON_EXE -m pytest -q tests/
 
 jobs:
   include:

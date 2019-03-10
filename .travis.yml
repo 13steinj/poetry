@@ -10,6 +10,12 @@ cache:
     - "$HOME/.cache/pypoetry"
     - "$HOME/.cache/pre-commit"
 
+before_install:
+  - if [ -n "$JYTHON" ]; then ./travis_jython.sh; source $HOME/myvirtualenv/bin/activate ;fi
+  - if [ -n "$JYTHON" ]; then pip install jip; fi
+  - if [ -n "$JYTHON" ]; then export CLASSPATH=$VIRTUAL_ENV/javalib/*; fi
+  - if [ -n "$JYTHON" ]; then pip install unittest2; fi
+
 install:
   - pip install pip -U
   - python get-poetry.py --preview -y
@@ -21,6 +27,11 @@ script: pytest -q tests/
 jobs:
   include:
     - python: "2.7"
+      env:
+        - JYTHON=""
+    - python: "2.7"
+      env:    
+        - JYTHON=org.python:jython-installer:2.7.1
     - python: "3.5"
     - python: "3.6"
     - python: "3.7"
